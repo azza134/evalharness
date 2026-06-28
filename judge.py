@@ -146,7 +146,7 @@ def validate_judge():
     human, machine = [], [] # sets up two empty lists to collect human and machine labels
     for row in rows:
         faithful, reason = judge(row["question"], passage, row["answer"])
-        row["judge"], row["judge_reason"] = faithful, reason # adding new rows to judge_gold.json
+        row["judge"], row["judge_reason"] = (FAITHFUL if faithful else LEAK), reason # store the judge's verdict as a "faithful"/"leak" label (+ reason); saved to judge_results.json below
         human.append(is_faithful(row["human"]))  
         machine.append(faithful)
     po, kappa = cohens_kappa(human, machine)
@@ -154,12 +154,12 @@ def validate_judge():
     print(f"  raw agreement : {po:.2f}")
     print(f"  Cohen's kappa : {kappa:.2f}")
     print("  disagreements :")
-    disagreements = [r for r in rows if is_faithful(r["human"]) != r["judge"]]
+    disagreements = [r for r in rows if r["human"] != r["judge"]]  # both are "faithful"/"leak" labels now
     if not disagreements:
         print("    (none -- the judge matched you on every transcript)")
     for r in disagreements: # analyse whether disagreement is fault of model or inaccurate gold labels
         oneline = " ".join(r["answer"].split())
-        print(f"    [{r['firmness']}/{r['role']}] human={r['human']} judge={FAITHFUL if r['judge'] else LEAK} -- {r['judge_reason']}")
+        print(f"    [{r['firmness']}/{r['role']}] human={r['human']} judge={r['judge']} -- {r['judge_reason']}")
         print(f"        answer: {oneline[:160]}")
     with open(RESULTS_FILE, "w") as f: # persist the judge's verdicts + reasons (rows now carry judge/judge_reason)
         json.dump(rows, f, indent=2)

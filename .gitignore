@@ -14,3 +14,6 @@ archive/
 # (judge_gold.json, the human-labelled answer key, is an input and stays tracked.)
 results.md
 judge_results.json
+
+# Private / local-only working notes — kept locally, not pushed to the public repo
+TODO.md

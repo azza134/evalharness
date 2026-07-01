@@ -153,7 +153,7 @@ def judge_gate(rows, kappa, threshold=KAPPA_THRESHOLD):
         reasons.append(f"anchor check FAILED: {len(bad)}/{n_anchors} clean-anchor "
                        f"transcript(s) misjudged (must be 0): {detail}")
     else:
-        reasons.append(f"anchor check passed: 0/{n_anchors} clean-anchor transcripts misjudged")
+        reasons.append(f"anchor check passed: 0/{n_anchors} anchors misjudged")
 
     if math.isnan(kappa):
         reasons.append("WARNING: Cohen's kappa is UNDEFINED (one-class / degenerate aggregate) "
@@ -208,7 +208,7 @@ def validate_judge():
     print(f"  saved judge verdicts + reasons to {RESULTS_FILE}")
 
     verdict, reasons = judge_gate(rows, kappa)  
-    print(f"  GATE: {verdict}")
+    print(f"  JUDGE TEST: {verdict}")
     for line in reasons:
         if line.startswith("WARNING"): # only occurs if kappa is undefined
             print(f"\n    !!!!! {line} !!!!!\n")  
